@@ -1,0 +1,51 @@
+---
+Synopsis: By analysising US storm data, we indentify most harmful event by health
+  and damage.
+Title: US storm data analysis
+output:
+  html_document:
+    keep_md: yes
+  pdf_document: default
+---
+
+
+
+#Data Processing:
+
+## Loading and preprocessing the data
+
+```{r, echo = TRUE, cache=TRUE, eval=TRUE}
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(ggplot2))
+Sys.setlocale("LC_ALL", "English")
+rm(list=ls())
+d<-read.csv("repdata_data_StormData.csv", header=TRUE, sep=",")
+```
+
+```{r, echo=TRUE, cache=TRUE, eval=TRUE}
+d$total_health_harm<-as.numeric(as.character(d$FATALITIES))+as.numeric(as.character(d$INJURIES))
+d$total_dmg<-as.numeric(as.character(d$PROPDMG))+as.numeric(as.character(d$CROPDMG))
+health<-tapply(d$total_health_harm, d$EVTYPE, sum, na.rm=TRUE)
+health<-sort(health, decreasing=TRUE)
+dmg<-tapply(d$total_dmg, d$EVTYPE, sum, na.rm=TRUE)
+dmg<-sort(dmg, decreasing=TRUE)
+```
+
+# Analysis data, top harmful events for health are:
+
+```{r, echo = TRUE, cache=TRUE,eval=TRUE}
+head(health)
+barplot(health[1:6], main="fatality+injury", las=2)
+```
+
+# Analysis data, top harmful events for prop dmg are:
+
+```{r, echo = TRUE, cache=TRUE,eval=TRUE}
+head(dmg)
+barplot(dmg[1:6], main='prop dmg + crop dmg', las=2)
+```
+
+# Results:
+1. By analysising storm data, TORNADO is the most harmful events for health.
+
+2. By analysising storm data, TORNADO is also the most harmful events for damage.
